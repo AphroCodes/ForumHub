@@ -5,10 +5,9 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
 
 @RestController
 @RequestMapping("topicos")
@@ -32,13 +31,13 @@ public class ControllerTopicos {
     @Transactional
     public void atualizarMensagem(@RequestBody @Valid DadosAtualizacaoTopicos dados){
         var topico = repositorioTopico.getReferenceById(dados.id());
-        topico.atualizarMensagem(dados);
+        topico.atualizarTopico(dados);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public void excluir(@PathVariable Long id) {
         var topico = repositorioTopico.getReferenceById(id);
-        topico.excluir();
+        topico.deletarTopico();
     }
 }
