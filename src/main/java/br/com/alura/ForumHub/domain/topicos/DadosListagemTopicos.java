@@ -1,4 +1,4 @@
-package br.com.alura.ForumHub.dto;
+package br.com.alura.ForumHub.domain.topicos;
 
 public record DadosListagemTopicos(Long id, String titulo, String mensagem, String autor, Cursos cursos) {
 

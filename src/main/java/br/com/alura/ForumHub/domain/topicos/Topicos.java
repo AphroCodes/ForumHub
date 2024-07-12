@@ -1,4 +1,4 @@
-package br.com.alura.ForumHub.dto;
+package br.com.alura.ForumHub.domain.topicos;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +17,9 @@ public class Topicos {
     private Long id;
     private String titulo;
     private String mensagem;
+    private String dataCriacao;
     private String autor;
+    private String resposta;
 
     @Enumerated(EnumType.STRING)
     private Cursos curso;
@@ -25,11 +27,14 @@ public class Topicos {
     private Boolean ativo;
 
     public Topicos(DadosCadastroTopico dados) {
-        this.ativo = true;
         this.autor = dados.autor();
         this.titulo = dados.titulo();
         this.mensagem = dados.mensagem();
+        this.dataCriacao = dados.dataCriacao();
         this.curso = dados.curso();
+        this.resposta = dados.respostas();
+//        this.ativo = dados.status();
+        this.ativo = true;
     }
 
     public void atualizarTopico(DadosAtualizacaoTopicos dados) {

@@ -1,4 +1,4 @@
-package br.com.alura.ForumHub.dto;
+package br.com.alura.ForumHub.domain.topicos;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
