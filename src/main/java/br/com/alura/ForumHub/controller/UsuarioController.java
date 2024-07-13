@@ -1,44 +1,35 @@
 package br.com.alura.ForumHub.controller;
 
 import br.com.alura.ForumHub.domain.usuarios.*;
+import br.com.alura.ForumHub.repository.RepositorioUsuarios;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("usuario")
+@RequestMapping("usuarios")
 public class UsuarioController {
 
     @Autowired
     private RepositorioUsuarios repositorioUsuarios;
 
+    private ResponseEntity<?> buscarUsuario(@PathVariable Long id) {
+        var user = repositorioUsuarios.findById(id);
+        if (user.isPresent()){
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping
     @Transactional
-    public void novoUsuario(@RequestBody @Valid DadosCadastroUsuario dados) {
-        repositorioUsuarios.save(new Usuario(dados));
-    }
-
-    @GetMapping
-    public Page<DadosListagemUsuario> listar(@PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
-        return repositorioUsuarios.findAllByAtivoTrue(pageable).map(DadosListagemUsuario::new);
-    }
-
-    @PutMapping
-    @Transactional
-    public void atualizarUsuario(@RequestBody @Valid DadosAtualizarUsuario dados) {
-        var usuario = repositorioUsuarios.getReferenceById(dados.id());
-        usuario.atualizar(dados);
-    }
-
-    @DeleteMapping("/{id}")
-    @Transactional
-    public void excluirUsuario(@PathVariable Long id) {
-        var usuario = repositorioUsuarios.getReferenceById(id);
-        usuario.excluir();
+    public ResponseEntity novoUsuario(@RequestBody @Valid DadosCadastroUsuario dados) {
+        var usuario = new Usuario(dados);
+        repositorioUsuarios.save(usuario);
+        return ResponseEntity.ok().build();
     }
 }
 

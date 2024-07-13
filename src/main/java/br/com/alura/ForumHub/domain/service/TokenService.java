@@ -1,4 +1,4 @@
-package br.com.alura.ForumHub.infra.security.autenticacao;
+package br.com.alura.ForumHub.domain.service;
 
 import br.com.alura.ForumHub.domain.usuarios.Usuario;
 import com.auth0.jwt.JWT;
@@ -15,27 +15,29 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("{api.security.token.secret}")
+    @Value("{JWT_SECRET}")
     private String secret;
 
     public String gerarToken(Usuario usuario) {
         try {
-            var algoritmo = Algorithm.HMAC256(secret);
+            Algorithm algoritmo = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("API ForumHub")
-                    .withSubject(usuario.getEmail())
+                    .withSubject(usuario.getLogin())
                     .withExpiresAt(dataExpiracao())
-                    .withClaim("id", usuario.getId())
-                    .withClaim("nome", usuario.getNome())
                     .sign(algoritmo);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("erro ao gerar token JWT", exception);
         }
     }
 
+    private Instant dataExpiracao(){
+        return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
+    }
+
     public String getSubject(String tokenJWT) {
         try {
-            var algoritmo = Algorithm.HMAC256(secret);
+            Algorithm algoritmo = Algorithm.HMAC256(secret);
             return JWT.require(algoritmo)
                     .withIssuer("API ForumHub")
                     .build()
@@ -44,9 +46,5 @@ public class TokenService {
         } catch (JWTVerificationException exception) {
             throw new RuntimeException("Token JWT inválido ou expirado!");
         }
-    }
-
-    private Instant dataExpiracao() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }

@@ -1,6 +1,6 @@
 package br.com.alura.ForumHub.domain.service;
 
-import br.com.alura.ForumHub.domain.usuarios.RepositorioUsuarios;
+import br.com.alura.ForumHub.repository.RepositorioUsuarios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

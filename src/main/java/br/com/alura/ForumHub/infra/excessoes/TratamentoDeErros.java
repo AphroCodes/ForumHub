@@ -1,5 +1,6 @@
 package br.com.alura.ForumHub.infra.excessoes;
 
+import br.com.alura.ForumHub.domain.exception.ValidacaoException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,11 @@ public class TratamentoDeErros {
     public ResponseEntity tratamentoErro400(MethodArgumentNotValidException ex) {
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
+    }
+
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity RegraDeNegocio(ValidacaoException erro){
+        return ResponseEntity.badRequest().body(erro.getMessage());
     }
 
     private record DadosErroValidacao(String campo, String mensagem) {

@@ -24,29 +24,14 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
+    private String login;
     private String email;
     private String senha;
-    private String perfis;
-
-    private Boolean ativo;
 
     public Usuario (DadosCadastroUsuario dados) {
-        this.ativo = true;
-        this.nome = dados.nome();
+        this.login = dados.login();
         this.email = dados.email();
         this.senha = dados.senha();
-        this.perfis = dados.perfis();
-    }
-
-    public void atualizar(DadosAtualizarUsuario dados) {
-        if (dados.nome() != null) {
-            this.nome = dados.nome();
-        }
-    }
-
-    public void excluir() {
-        this.ativo = false;
     }
 
     @Override
@@ -61,26 +46,26 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return login;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return UserDetails.super.isEnabled();
     }
 }

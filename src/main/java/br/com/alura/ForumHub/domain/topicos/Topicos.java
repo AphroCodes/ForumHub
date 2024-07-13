@@ -1,7 +1,10 @@
 package br.com.alura.ForumHub.domain.topicos;
 
+import br.com.alura.ForumHub.domain.autor.Autor;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "topicos")
 @Entity(name = "Topico")
@@ -17,33 +20,37 @@ public class Topicos {
     private Long id;
     private String titulo;
     private String mensagem;
-    private String dataCriacao;
-    private String autor;
-    private String resposta;
+    private LocalDateTime data;
+    private Boolean respostaTopico;
+
+    @ManyToOne
+    @JoinColumn(name = "autor_id", nullable = false)
+    private Autor autor;
 
     @Enumerated(EnumType.STRING)
     private Cursos curso;
 
-    private Boolean ativo;
+    @OneToMany(mappedBy = "topicos", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Respostas> respostas;
 
-    public Topicos(DadosCadastroTopico dados) {
-        this.autor = dados.autor();
+    public Topicos(DadosCadastroTopico dados, Autor autor) {
         this.titulo = dados.titulo();
         this.mensagem = dados.mensagem();
-        this.dataCriacao = dados.dataCriacao();
+        this.data = LocalDateTime.now();
+        this.respostaTopico = true;
+        this.autor = autor;
         this.curso = dados.curso();
-        this.resposta = dados.respostas();
-//        this.ativo = dados.status();
-        this.ativo = true;
     }
 
     public void atualizarTopico(DadosAtualizacaoTopicos dados) {
+        if (dados.titulo() != null) {
+            this.titulo = dados.titulo();
+        }
         if (dados.mensagem() != null) {
             this.mensagem = dados.mensagem();
         }
-    }
-
-    public void deletarTopico() {
-        this.ativo = false;
+        if (dados.respostaTopico() != null) {
+            this.respostaTopico = dados.respostaTopico();
+        }
     }
 }

@@ -1,6 +1,7 @@
-package br.com.alura.ForumHub.infra.security.autenticacao;
+package br.com.alura.ForumHub.infra.security;
 
-import br.com.alura.ForumHub.domain.usuarios.RepositorioUsuarios;
+import br.com.alura.ForumHub.domain.service.TokenService;
+import br.com.alura.ForumHub.repository.RepositorioUsuarios;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +25,18 @@ public class FiltroSeguranca extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var tokenJWT = recuperarToken(request);
+        if ("/login".equals(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        if (tokenJWT == null) {
+        var tokenJWT = recuperarToken(request);
+        if (tokenJWT != null) {
             var subject = tokenService.getSubject(tokenJWT);
             var usuario = repositorioUsuarios.findByLogin(subject);
 
             var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("Usuário logado com sucesso");
         }
 
         filterChain.doFilter(request, response);
@@ -40,10 +44,9 @@ public class FiltroSeguranca extends OncePerRequestFilter {
 
     private String recuperarToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if (authHeader == null) {
-            throw new RuntimeException("Token JWT não enviado no cabeçalho Autorization");
+        if (authHeader != null) {
+            return authHeader.replace("Bearer", "");
         }
-
-        return authHeader.replace("Bearer", "");
+        return null;
     }
 }

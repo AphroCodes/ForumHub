@@ -1,6 +1,4 @@
 package br.com.alura.ForumHub.infra.security;
 
-public class DadosTokenJWT {
-    public DadosTokenJWT(String token) {
-    }
+public record DadosTokenJWT (String token) {
 }
