@@ -30,6 +30,7 @@ public class FiltroSeguranca extends OncePerRequestFilter {
             return;
         }
 
+
         var tokenJWT = recuperarToken(request);
         if (tokenJWT != null) {
             var subject = tokenService.getSubject(tokenJWT);
